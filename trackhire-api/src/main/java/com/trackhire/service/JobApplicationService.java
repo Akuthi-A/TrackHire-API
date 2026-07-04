@@ -1,5 +1,6 @@
 package com.trackhire.service;
 
+import com.trackhire.model.JobApplication;
 import com.trackhire.repository.JobApplicationRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,10 @@ public class JobApplicationService {
 
     public JobApplicationService(JobApplicationRepository repository) {
         this.repository = repository;
+    }
+
+    public JobApplication createJobApplication(JobApplication jobApplication) {
+        return repository.save(jobApplication);
     }
 
 }
