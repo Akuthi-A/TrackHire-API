@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/job-applications")
@@ -43,12 +44,13 @@ public class JobApplicationController {
 
 
     @GetMapping
-    public ResponseEntity<List<JobApplication>> findAll() {
-        List<JobApplication> jobs = service.findAll();
+    public ResponseEntity<Page<JobApplication>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(jobs);
+                .body(service.findAll(page, size));
     }
 
 
@@ -75,4 +77,10 @@ public class JobApplicationController {
     }
 
 
+    @GetMapping("/dashboard")
+    public ResponseEntity<Map<String, Long>> getDashboard() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.getDashboard());
+    }
 }

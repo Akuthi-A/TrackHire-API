@@ -1,10 +1,17 @@
 package com.trackhire.service;
 
+import com.trackhire.exception.JobApplicationNotFoundException;
 import com.trackhire.model.JobApplication;
+import com.trackhire.model.Status;
 import com.trackhire.repository.JobApplicationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -22,11 +29,14 @@ public class JobApplicationService {
 
     public JobApplication findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job application not found"));
+                .orElseThrow(() ->
+                        new JobApplicationNotFoundException(id));
     }
 
-    public List<JobApplication> findAll() {
-        return repository.findAll();
+    public Page<JobApplication> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return repository.findAll(pageable);
     }
 
 
@@ -49,4 +59,19 @@ public class JobApplicationService {
         repository.delete(jobToDelete);
     }
 
+
+    public Map<String, Long> getDashboard() {
+
+        Map<String, Long> stats = new HashMap<>();
+
+        stats.put("totalApplications", repository.count());
+        stats.put("applied", repository.countByStatus(Status.APPLIED));
+        stats.put("interview", repository.countByStatus(Status.INTERVIEW));
+        stats.put("offer", repository.countByStatus(Status.OFFER));
+        stats.put("rejected", repository.countByStatus(Status.REJECTED));
+
+        return stats;
+    }
+
 }
+

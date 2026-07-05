@@ -13,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.data.domain.PageImpl;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,6 +84,18 @@ class JobApplicationControllerTest {
 
 
     @Test
+    void shouldReturn404WhenJobApplicationDoesNotExist() {
+
+        ResponseEntity<String> response =
+                restTemplate.getForEntity(
+                        "/api/job-applications/999",
+                        String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+
+    @Test
     void shouldReturnAllJobApplications() {
 
         // Arrange
@@ -97,22 +112,19 @@ class JobApplicationControllerTest {
         repository.save(google);
         repository.save(microsoft);
 
-        // Act
-        ResponseEntity<JobApplication[]> response =
+        ResponseEntity<String> response =
                 restTemplate.getForEntity(
                         "/api/job-applications",
-                        JobApplication[].class);
+                        String.class);
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        JobApplication[] jobs = response.getBody();
+        String json = response.getBody();
 
-        assertNotNull(jobs);
-        assertEquals(2, jobs.length);
-
-        assertEquals("Google", jobs[0].getCompanyName());
-        assertEquals("Microsoft", jobs[1].getCompanyName());
+        assertNotNull(json);
+        assertTrue(json.contains("Google"));
+        assertTrue(json.contains("Microsoft"));
+        assertTrue(json.contains("\"content\""));
     }
 
 
@@ -176,4 +188,5 @@ class JobApplicationControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertFalse(repository.findById(saved.getId()).isPresent());
     }
+
 }
