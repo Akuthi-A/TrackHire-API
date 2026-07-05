@@ -84,4 +84,40 @@ class JobApplicationControllerIntegrationTest {
         assertEquals("Software Engineer", result.getRole());
         assertEquals(Status.APPLIED, result.getStatus());
     }
+
+
+    @Test
+    void shouldReturnAllJobApplications() {
+
+        // Arrange
+        JobApplication google = new JobApplication();
+        google.setCompanyName("Google");
+        google.setRole("Software Engineer");
+        google.setStatus(Status.APPLIED);
+
+        JobApplication microsoft = new JobApplication();
+        microsoft.setCompanyName("Microsoft");
+        microsoft.setRole("Backend Developer");
+        microsoft.setStatus(Status.INTERVIEW);
+
+        repository.save(google);
+        repository.save(microsoft);
+
+        // Act
+        ResponseEntity<JobApplication[]> response =
+                restTemplate.getForEntity(
+                        "/api/job-applications",
+                        JobApplication[].class);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        JobApplication[] jobs = response.getBody();
+
+        assertNotNull(jobs);
+        assertEquals(2, jobs.length);
+
+        assertEquals("Google", jobs[0].getCompanyName());
+        assertEquals("Microsoft", jobs[1].getCompanyName());
+    }
 }

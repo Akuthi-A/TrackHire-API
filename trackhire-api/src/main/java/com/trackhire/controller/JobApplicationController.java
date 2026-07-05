@@ -2,6 +2,8 @@ package com.trackhire.controller;
 
 import com.trackhire.model.JobApplication;
 import com.trackhire.service.JobApplicationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +33,21 @@ public class JobApplicationController {
 
 
     @GetMapping("/{requestedId}")
-    private ResponseEntity<JobApplication> findById(@PathVariable Long requestedId) {
+    public ResponseEntity<JobApplication> findById(@PathVariable Long requestedId) {
         JobApplication job = service.findById(requestedId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(job);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<JobApplication>> findAll() {
+        List<JobApplication> jobs = service.findAll();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(jobs);
     }
 }

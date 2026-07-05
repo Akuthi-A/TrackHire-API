@@ -4,6 +4,7 @@ import com.trackhire.model.JobApplication;
 import com.trackhire.repository.JobApplicationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,10 @@ public class JobApplicationService {
     public JobApplication findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job application not found"));
+    }
+
+    public List<JobApplication> findAll() {
+        return repository.findAll();
     }
 
 }
