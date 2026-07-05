@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Entity
 public class JobApplication {
 
+    @Setter
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
