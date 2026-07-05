@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/job-applications")
 public class JobApplicationController {
@@ -25,5 +27,15 @@ public class JobApplicationController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(saved);
+    }
+
+
+    @GetMapping("/{requestedId}")
+    private ResponseEntity<JobApplication> findById(@PathVariable Long requestedId) {
+        JobApplication job = service.findById(requestedId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(job);
     }
 }
