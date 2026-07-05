@@ -29,4 +29,17 @@ public class JobApplicationService {
         return repository.findAll();
     }
 
+
+    public JobApplication updateJobApplication(
+            Long id,
+            JobApplication updatedJob) {
+
+        JobApplication existing = findById(id);
+
+        existing.setRole(updatedJob.getRole());
+        existing.setStatus(updatedJob.getStatus());
+
+        return repository.save(existing);
+    }
+
 }

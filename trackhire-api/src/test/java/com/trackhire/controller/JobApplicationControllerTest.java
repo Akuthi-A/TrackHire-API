@@ -12,19 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class JobApplicationControllerIntegrationTest {
+class JobApplicationControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -119,5 +113,42 @@ class JobApplicationControllerIntegrationTest {
 
         assertEquals("Google", jobs[0].getCompanyName());
         assertEquals("Microsoft", jobs[1].getCompanyName());
+    }
+
+
+    @Test
+    void shouldUpdateJobApplication() {
+
+        // Arrange
+        JobApplication job = new JobApplication();
+        job.setCompanyName("Google");
+        job.setRole("Software Engineer");
+        job.setStatus(Status.APPLIED);
+
+        JobApplication saved = repository.save(job);
+
+        JobApplication updated = new JobApplication();
+        updated.setRole("Senior Backend Engineer");
+        updated.setStatus(Status.INTERVIEW);
+
+        // Act
+        HttpEntity<JobApplication> request = new HttpEntity<>(updated);
+
+        ResponseEntity<JobApplication> response =
+                restTemplate.exchange(
+                        "/api/job-applications/" + saved.getId(),
+                        HttpMethod.PUT,
+                        request,
+                        JobApplication.class);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        JobApplication result = response.getBody();
+
+        assertNotNull(result);
+        assertEquals("Google", result.getCompanyName());
+        assertEquals("Senior Backend Engineer", result.getRole());
+        assertEquals(Status.INTERVIEW, result.getStatus());
     }
 }

@@ -50,4 +50,16 @@ public class JobApplicationController {
                 .status(HttpStatus.OK)
                 .body(jobs);
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<JobApplication> updateJobApplication(
+            @PathVariable Long id,
+            @RequestBody JobApplication jobApplication) {
+
+        JobApplication updated =
+                service.updateJobApplication(id, jobApplication);
+
+        return ResponseEntity.ok(updated);
+    }
 }
