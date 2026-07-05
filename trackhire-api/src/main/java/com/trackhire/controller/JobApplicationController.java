@@ -52,14 +52,27 @@ public class JobApplicationController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{requestedId}")
     public ResponseEntity<JobApplication> updateJobApplication(
-            @PathVariable Long id,
+            @PathVariable Long requestedId,
             @RequestBody JobApplication jobApplication) {
 
         JobApplication updated =
-                service.updateJobApplication(id, jobApplication);
+                service.updateJobApplication(requestedId, jobApplication);
 
-        return ResponseEntity.ok(updated);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(updated);
     }
+
+
+    @DeleteMapping("/{requestedId}")
+    public ResponseEntity<Void> deleteJobApplication(@PathVariable Long requestedId) {
+
+        service.deleteJobApplication(requestedId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

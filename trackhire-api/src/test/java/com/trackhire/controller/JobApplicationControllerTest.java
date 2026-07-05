@@ -151,4 +151,29 @@ class JobApplicationControllerTest {
         assertEquals("Senior Backend Engineer", result.getRole());
         assertEquals(Status.INTERVIEW, result.getStatus());
     }
+
+
+    @Test
+    void shouldDeleteJobApplication() {
+
+        // Arrange
+        JobApplication job = new JobApplication();
+        job.setCompanyName("Google");
+        job.setRole("Software Engineer");
+        job.setStatus(Status.APPLIED);
+
+        JobApplication saved = repository.save(job);
+
+        // Act
+        ResponseEntity<Void> response =
+                restTemplate.exchange(
+                        "/api/job-applications/" + saved.getId(),
+                        HttpMethod.DELETE,
+                        null,
+                        Void.class);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertFalse(repository.findById(saved.getId()).isPresent());
+    }
 }

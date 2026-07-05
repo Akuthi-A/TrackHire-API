@@ -42,4 +42,11 @@ public class JobApplicationService {
         return repository.save(existing);
     }
 
+
+    public void deleteJobApplication(Long id) {
+        JobApplication jobToDelete = findById(id);
+
+        repository.delete(jobToDelete);
+    }
+
 }
